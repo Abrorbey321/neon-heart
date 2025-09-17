@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neon Heart Lines</title>
+  <style>
+    body {
+      margin: 0;
+      background: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+    }
+    .text {
+      position: absolute;
+      color: white;
+      font-size: 2.5rem;
+      font-family: "Poppins", sans-serif;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="text">I love You</div>
+  <canvas id="canvas"></canvas>
+
+  <script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let t1 = 0;
+    let t2 = Math.PI; // ikkinchi chiziq qarama-qarshi joydan boshlanadi
+
+    function heartPoint(t) {
+      let x = 16 * Math.pow(Math.sin(t), 3);
+      let y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+      return { x: x * 15, y: y * 15 };
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.save();
+      ctx.translate(canvas.width / 2, canvas.height / 2);
+
+      // Yurak konturini yumshoq kul rang bilan chizamiz
+      ctx.beginPath();
+      ctx.strokeStyle = "rgba(255,255,255,0.05)";
+      ctx.lineWidth = 2;
+      for (let t = 0; t <= Math.PI * 2; t += 0.01) {
+        let p = heartPoint(t);
+        if (t === 0) ctx.moveTo(p.x, p.y);
+        else ctx.lineTo(p.x, p.y);
+      }
+      ctx.stroke();
+
+      // 1-neon chiziq (pushti)
+      ctx.beginPath();
+      ctx.shadowBlur = 20;
+      ctx.shadowColor = "deeppink";
+      ctx.strokeStyle = "deeppink";
+      ctx.lineWidth = 6;
+      for (let i = 0; i < 0.8; i += 0.01) {
+        let p = heartPoint((t1 + i) % (Math.PI * 2));
+        if (i === 0) ctx.moveTo(p.x, p.y);
+        else ctx.lineTo(p.x, p.y);
+      }
+      ctx.stroke();
+
+      // 2-neon chiziq (ko‘k)
+      ctx.beginPath();
+      ctx.shadowBlur = 20;
+      ctx.shadowColor = "deepskyblue";
+      ctx.strokeStyle = "deepskyblue";
+      ctx.lineWidth = 6;
+      for (let i = 0; i < 0.8; i += 0.01) {
+        let p = heartPoint((t2 + i) % (Math.PI * 2));
+        if (i === 0) ctx.moveTo(p.x, p.y);
+        else ctx.lineTo(p.x, p.y);
+      }
+      ctx.stroke();
+
+      ctx.restore();
+
+      // chiziqlarni oldinga siljitamiz
+      t1 += 0.02;
+      t2 += 0.02;
+
+      requestAnimationFrame(draw);
+    }
+
+    draw();
+  </script>
+</body>
+</html>
